@@ -19,6 +19,7 @@ namespace QWOP_GA.GeneticAlgorithm
         private int currentMovementStep = 0;
         private float lastMovementTime = 0;
         private float distanceWalked = 0;
+        private float timeAlive = 0;
         private bool isAlive = true;
 
         private void Awake ()
@@ -34,6 +35,7 @@ namespace QWOP_GA.GeneticAlgorithm
             currentMovementStep = 0;
             distanceWalked = 0;
             lastMovementTime = float.NegativeInfinity;
+            timeAlive = 0;
             isAlive = true;
         }
 
@@ -49,6 +51,7 @@ namespace QWOP_GA.GeneticAlgorithm
         {
             if (!isAlive) return;
 
+            timeAlive += Time.deltaTime;
             distanceWalked = 50f - Vector3.Distance(torso.position, new Vector3(50, 0, 0));
 
             if (Time.time >= lastMovementTime + movementSequences[currentMovementStep].nextMovementDelay)
@@ -77,9 +80,9 @@ namespace QWOP_GA.GeneticAlgorithm
             return dna;
         }
 
-        public float GetWalkedDistance ()
+        public float GetFitness ()
         {
-            return distanceWalked;
+            return (distanceWalked * 0.8f) + (timeAlive * 0.2f);
         }
     }
 }

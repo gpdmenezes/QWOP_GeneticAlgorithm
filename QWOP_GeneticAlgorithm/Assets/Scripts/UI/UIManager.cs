@@ -28,7 +28,7 @@ namespace QWOP_GA.UI
 
         public void UpdateAllTimeBestText (float distance)
         {
-            lastGenerationText.text = "- All Time Best: " + String.Format("{0:0.00}", distance);
+            allTimeBestText.text = "- All Time Best: " + String.Format("{0:0.00}", distance);
         }
 
     }

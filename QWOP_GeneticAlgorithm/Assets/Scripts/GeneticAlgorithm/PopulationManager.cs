@@ -22,6 +22,7 @@ namespace QWOP_GA.GeneticAlgorithm
         {
             UIManager.UpdateGenerationText(currentGeneration);
             UIManager.UpdateLastGenerationText(0f);
+            UIManager.UpdateAllTimeBestText(0f);
             SpawnFirstPopulation();
         }
 
@@ -52,9 +53,9 @@ namespace QWOP_GA.GeneticAlgorithm
 
         private void BreedNewPopulation ()
         {
-            List<GameObject> sortedPopulation = population.OrderBy(o => o.GetComponent<Brain>().GetWalkedDistance()).ToList();
+            List<GameObject> sortedPopulation = population.OrderBy(o => o.GetComponent<Brain>().GetFitness()).ToList();
 
-            float lastGenerationBest = sortedPopulation[sortedPopulation.Count - 1].GetComponent<Brain>().GetWalkedDistance();
+            float lastGenerationBest = sortedPopulation[sortedPopulation.Count - 1].GetComponent<Brain>().GetFitness();
             UIManager.UpdateLastGenerationText(lastGenerationBest);
             if (lastGenerationBest > allTimeBest)
             {
