@@ -1,13 +1,11 @@
 using UnityEngine;
 
-namespace QWOPGeneticAlgorithm 
+namespace QWOP_GA.Runtime 
 {
 
     public class RunnerController : MonoBehaviour
     {
-
         [SerializeField] private float hingeSpeed = 40f;
-
         [SerializeField] private HingeJoint2D rightThigh;
         [SerializeField] private HingeJoint2D leftThigh;
         [SerializeField] private HingeJoint2D rightCalf;
@@ -26,43 +24,26 @@ namespace QWOPGeneticAlgorithm
             leftCalfMotor = leftCalf.motor;
         }
 
-        private void Update ()
+        public void Move (int movementType)
         {
-            ProcessThighInput();
-            ProcessCalfInput();
-        }
-
-        private void ProcessThighInput ()
-        {
-            if (Input.GetKey(KeyCode.Q))
+            switch (movementType)
             {
-                MoveThighs(true);
-            }
-            else if (Input.GetKey(KeyCode.W))
-            {
-                MoveThighs(false);
-            }
-            else
-            {
-                rightThigh.useMotor = false;
-                leftThigh.useMotor = false;
-            }
-        }
-
-        private void ProcessCalfInput ()
-        {
-            if (Input.GetKey(KeyCode.O))
-            {
-                MoveCalfs(true);
-            }
-            else if (Input.GetKey(KeyCode.P))
-            {
-                MoveCalfs(false);
-            }
-            else
-            {
-                rightCalf.useMotor = false;
-                leftCalf.useMotor = false;
+                case 0:
+                    MoveThighs(true);
+                    StopMovingCalfs();
+                    break;
+                case 1:
+                    MoveThighs(false);
+                    StopMovingCalfs();
+                    break;
+                case 2:
+                    MoveCalfs(true);
+                    StopMovingThighs();
+                    break;
+                case 3:
+                    MoveCalfs(false);
+                    StopMovingThighs();
+                    break;
             }
         }
 
@@ -103,6 +84,18 @@ namespace QWOPGeneticAlgorithm
 
             rightCalf.motor = rightCalfMotor;
             leftCalf.motor = leftCalfMotor;
+        }
+
+        private void StopMovingThighs()
+        {
+            rightThigh.useMotor = false;
+            leftThigh.useMotor = false;
+        }
+
+        private void StopMovingCalfs()
+        {
+            rightCalf.useMotor = false;
+            leftCalf.useMotor = false;
         }
 
     }

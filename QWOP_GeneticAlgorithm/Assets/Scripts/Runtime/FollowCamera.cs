@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace QWOPGeneticAlgorithm
+namespace QWOP_GA.Runtime
 {
 
     public class FollowCamera : MonoBehaviour
