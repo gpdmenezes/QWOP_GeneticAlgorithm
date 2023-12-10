@@ -49,7 +49,7 @@ namespace QWOP_GA.GeneticAlgorithm
         {
             if (!isAlive) return;
 
-            distanceWalked = Vector3.Distance(transform.position, new Vector3(50, 0, 0));
+            distanceWalked = 50f - Vector3.Distance(torso.position, new Vector3(50, 0, 0));
 
             if (Time.time >= lastMovementTime + movementSequences[currentMovementStep].nextMovementDelay)
             {

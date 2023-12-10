@@ -9,16 +9,19 @@ namespace QWOP_GA.GeneticAlgorithm
     {
         [SerializeField] private UIManager UIManager;
         [SerializeField] private GameObject runnerPrefab;
-        [SerializeField] private int populationSize = 50;
+        [SerializeField] private int populationSize = 10;
         [SerializeField] private float trialTime = 10f;
         [SerializeField] private int mutationChance = 1;
 
         private List<GameObject> population = new List<GameObject>();
         private int currentGeneration = 1;
         private float timeElapsed = 0;
+        private float allTimeBest = 0;
 
         private void Awake ()
         {
+            UIManager.UpdateGenerationText(currentGeneration);
+            UIManager.UpdateLastGenerationText(0f);
             SpawnFirstPopulation();
         }
 
@@ -42,7 +45,7 @@ namespace QWOP_GA.GeneticAlgorithm
                 brain.GetDNA().MutateGene();
             } else
             {
-                //brain.GetDNA().Combine;
+                brain.GetDNA().CombineDNAs(parent1.GetComponent<Brain>().GetDNA(), parent2.GetComponent<Brain>().GetDNA());
             }
             return offspring;
         }
@@ -50,7 +53,15 @@ namespace QWOP_GA.GeneticAlgorithm
         private void BreedNewPopulation ()
         {
             List<GameObject> sortedPopulation = population.OrderBy(o => o.GetComponent<Brain>().GetWalkedDistance()).ToList();
-            
+
+            float lastGenerationBest = sortedPopulation[sortedPopulation.Count - 1].GetComponent<Brain>().GetWalkedDistance();
+            UIManager.UpdateLastGenerationText(lastGenerationBest);
+            if (lastGenerationBest > allTimeBest)
+            {
+                allTimeBest = lastGenerationBest;
+                UIManager.UpdateAllTimeBestText(allTimeBest);
+            }
+
             for (int i = (int) (sortedPopulation.Count / 2f) - 1; i < sortedPopulation.Count - 1; i++)
             {
                 population.Add(Breed(sortedPopulation[i], sortedPopulation[i + 1]));
@@ -59,15 +70,18 @@ namespace QWOP_GA.GeneticAlgorithm
 
             for (int i = 0; i < sortedPopulation.Count; i++)
             {
+                population.Remove(sortedPopulation[i]);
                 Destroy(sortedPopulation[i]);
             }
 
             currentGeneration++;
+            UIManager.UpdateGenerationText(currentGeneration);
         }
 
         private void Update ()
         {
             timeElapsed += Time.deltaTime;
+            UIManager.UpdateTimeText(timeElapsed);
             if (timeElapsed >= trialTime)
             {
                 BreedNewPopulation();
