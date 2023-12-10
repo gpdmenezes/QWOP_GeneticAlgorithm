@@ -1,9 +1,11 @@
 using UnityEngine;
 
-namespace QWOPGeneticAlgorithm {
+namespace QWOPGeneticAlgorithm 
+{
 
     public class RunnerController : MonoBehaviour
     {
+
         [SerializeField] private float hingeSpeed = 40f;
 
         [SerializeField] private HingeJoint2D rightThigh;
@@ -64,12 +66,12 @@ namespace QWOPGeneticAlgorithm {
             }
         }
 
-        private void MoveThighs (bool isRight)
+        private void MoveThighs (bool isRightThigh)
         {
             rightThigh.useMotor = true;
             leftThigh.useMotor = true;
 
-            if (isRight)
+            if (isRightThigh)
             {
                 rightThighMotor.motorSpeed = hingeSpeed;
                 leftThighMotor.motorSpeed = -hingeSpeed;
@@ -99,8 +101,8 @@ namespace QWOPGeneticAlgorithm {
                 leftCalfMotor.motorSpeed = hingeSpeed;
             }
 
-            rightCalf.motor = rightThighMotor;
-            leftCalf.motor = leftThighMotor;
+            rightCalf.motor = rightCalfMotor;
+            leftCalf.motor = leftCalfMotor;
         }
 
     }
