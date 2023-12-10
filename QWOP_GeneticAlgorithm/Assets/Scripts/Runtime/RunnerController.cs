@@ -2,7 +2,6 @@ using UnityEngine;
 
 namespace QWOP_GA.Runtime 
 {
-
     public class RunnerController : MonoBehaviour
     {
         [SerializeField] private float hingeSpeed = 40f;
@@ -17,6 +16,9 @@ namespace QWOP_GA.Runtime
         private JointMotor2D leftCalfMotor;
 
         private bool isMoving = false;
+        private int currentMovementType = 0;
+        private float currentMovementDuration = 0;
+        private float currentMovementStartTime = 0;
 
         private void Awake ()
         {
@@ -28,7 +30,23 @@ namespace QWOP_GA.Runtime
 
         public void StartMovement (int movementType, float movementDuration)
         {
-            switch (movementType)
+            currentMovementType = movementType;
+            currentMovementDuration = movementDuration;
+            currentMovementStartTime = Time.time;
+            isMoving = true;
+        }
+
+        private void Update ()
+        {
+            if (!isMoving) return;
+
+            if (Time.time >= currentMovementStartTime + currentMovementDuration)
+            {
+                isMoving = false;
+                return;
+            }
+
+            switch (currentMovementType)
             {
                 case 0:
                     MoveThighs(true);
@@ -47,11 +65,6 @@ namespace QWOP_GA.Runtime
                     StopMovingThighs();
                     break;
             }
-        }
-
-        private void Update ()
-        {
-            if (!isMoving) return;
         }
 
         private void MoveThighs (bool isRightThigh)
@@ -104,7 +117,5 @@ namespace QWOP_GA.Runtime
             rightCalf.useMotor = false;
             leftCalf.useMotor = false;
         }
-
     }
-
 }

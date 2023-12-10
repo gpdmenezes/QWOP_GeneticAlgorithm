@@ -1,7 +1,7 @@
 using UnityEngine;
 
-namespace QWOP_GA.GeneticAlgorithm {
-
+namespace QWOP_GA.GeneticAlgorithm 
+{
     public class DNA
     {
         private float rightThighStartingRotation;
@@ -10,14 +10,14 @@ namespace QWOP_GA.GeneticAlgorithm {
         private float leftCalfStartingRotation;
         private MovementSequence[] movementSequences;
 
-        private const float minThighRotation = -90f;
-        private const float maxThighRotation = 60f;
-        private const float minCalfRotation = -5f;
-        private const float maxCalfRotation = 120f;
+        private float minThighRotation = -90f;
+        private float maxThighRotation = 60f;
+        private float minCalfRotation = -5f;
+        private float maxCalfRotation = 120f;
 
-        private const int movementTypes = 4;
-        private const float maxMovementDuration = 5f;
-        private const float maxMovementDelay = 5f;
+        private int movementTypes = 4;
+        private float maxMovementDuration = 5f;
+        private float maxMovementDelay = 5f;
 
         public DNA (int moventSequencesSize)
         {
@@ -34,48 +34,11 @@ namespace QWOP_GA.GeneticAlgorithm {
 
             for (int i = 0; i < movementSequences.Length; i++)
             {
-                movementSequences[i].movementType = Random.Range(0, movementTypes + 1);
+                movementSequences[i] = new MovementSequence();
+                movementSequences[i].movementType = Random.Range(0, movementTypes);
                 movementSequences[i].movementDuration = Random.Range(0, maxMovementDuration);
                 movementSequences[i].nextMovementDelay = Random.Range(0, maxMovementDelay);
             }
-        }
-
-        public void SetGeneValue (float genePosition, float value)
-        {
-            switch (genePosition)
-            {
-                case 0:
-                    rightThighStartingRotation = value;
-                    break;
-                case 1:
-                    leftThighStartingRotation = value;
-                    break;
-                case 2:
-                    rightCalfStartingRotation = value;
-                    break;
-                case 3:
-                    leftCalfStartingRotation = value;
-                    break;
-            }
-        }
-
-        public void CombineDNAs (DNA dna1, DNA dna2)
-        {
-            /*
-            for (int i = 0; i < dnaLength; i++)
-            {
-                if (i < dnaLength / 2f)
-                {
-                    int value = dna1.genes[i];
-                    genes[i] = value;
-                } 
-                else
-                {
-                    int value = dna2.genes[i];
-                    genes[i] = value;
-                }
-            }
-            */
         }
 
         public void MutateGene ()
@@ -103,32 +66,118 @@ namespace QWOP_GA.GeneticAlgorithm {
             }
         }
 
-        public float GetGeneValue (string geneName)
+        public void CombineDNAs (DNA dna1, DNA dna2)
+        {
+            int totalGeneAmount = 4 + (movementSequences.Length * 3);
+            for (int i = 0; i < totalGeneAmount; i++)
+            {
+                if (i < totalGeneAmount / 2f)
+                {
+                    float geneValue = dna1.GetGeneValue(i);
+                    SetGeneValue(i, geneValue);
+                } 
+                else
+                {
+                    float geneValue = dna2.GetGeneValue(i);
+                    SetGeneValue(i, geneValue);
+                }
+            }
+        }
+
+        public void SetGeneValue (int genePosition, float geneValue)
+        {
+            if (genePosition < 4)
+            {
+                switch (genePosition)
+                {
+                    case 0:
+                        rightThighStartingRotation = geneValue;
+                        break;
+                    case 1:
+                        leftThighStartingRotation = geneValue;
+                        break;
+                    case 2:
+                        rightCalfStartingRotation = geneValue;
+                        break;
+                    case 3:
+                        leftCalfStartingRotation = geneValue;
+                        break;
+                }
+            }
+            else
+            {
+                int sequenceIndex = (genePosition - 4) / 3;
+                int propertyIndex = (genePosition - 4) % 3;
+
+                if (sequenceIndex < movementSequences.Length)
+                {
+                    MovementSequence sequence = movementSequences[sequenceIndex];
+
+                    switch (propertyIndex)
+                    {
+                        case 0:
+                            sequence.movementType = (int) geneValue;
+                            break;
+                        case 1:
+                            sequence.movementDuration = geneValue;
+                            break;
+                        case 2:
+                            sequence.nextMovementDelay = geneValue;
+                            break;
+                    }
+                }
+            }
+        }
+
+        public float GetGeneValue (int genePosition)
         {
             float geneValue = 0;
-            switch (geneName)
+
+            if (genePosition < 4)
             {
-                case "rightThighStartingRotation":
-                    geneValue = rightThighStartingRotation;
-                    break;
-                case "leftThighStartingRotation":
-                    geneValue = leftThighStartingRotation;
-                    break;
-                case "rightCalfStartingRotation":
-                    geneValue = rightCalfStartingRotation;
-                    break;
-                case "leftCalfStartingRotation":
-                    geneValue = leftCalfStartingRotation;
-                    break;
+                switch (genePosition)
+                {
+                    case 0:
+                        geneValue = rightThighStartingRotation;
+                        break;
+                    case 1:
+                        geneValue = leftThighStartingRotation;
+                        break;
+                    case 2:
+                        geneValue = rightCalfStartingRotation;
+                        break;
+                    case 3:
+                        geneValue = leftCalfStartingRotation;
+                        break;
+                }
+            } 
+            else
+            {
+                int sequenceIndex = (genePosition - 4) / 3;
+                int propertyIndex = (genePosition - 4) % 3;
+
+                MovementSequence sequence = movementSequences[sequenceIndex];
+
+                switch (propertyIndex)
+                {
+                    case 0:
+                        geneValue = sequence.movementType;
+                        break;
+                    case 1:
+                        geneValue = sequence.movementDuration;
+                        break;
+                    case 2:
+                        geneValue = sequence.nextMovementDelay;
+                        break;
+                }
             }
+            
             return geneValue;
         }
 
-        public MovementSequence[] GetMovementSequence ()
+        public MovementSequence[] GetMovementSequences ()
         {
             return movementSequences;
         }
-
     }
-
 }

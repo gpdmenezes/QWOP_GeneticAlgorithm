@@ -9,5 +9,4 @@ namespace QWOP_GA.GeneticAlgorithm
         public float movementDuration;
         public float nextMovementDelay;
     }
-
 }

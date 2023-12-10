@@ -3,7 +3,6 @@ using UnityEngine;
 
 namespace QWOP_GA.GeneticAlgorithm
 {
-
     [RequireComponent(typeof(RunnerController))]
     public class Brain : MonoBehaviour
     {
@@ -22,11 +21,16 @@ namespace QWOP_GA.GeneticAlgorithm
         private float distanceWalked = 0;
         private bool isAlive = true;
 
+        private void Awake ()
+        {
+            Initialize();
+        }
+
         public void Initialize ()
         {
             dna = new DNA(movementSequencesSize);
             SetupStartingRotation();
-            movementSequences = dna.GetMovementSequence();
+            movementSequences = dna.GetMovementSequences();
             currentMovementStep = 0;
             distanceWalked = 0;
             lastMovementTime = float.NegativeInfinity;
@@ -35,15 +39,10 @@ namespace QWOP_GA.GeneticAlgorithm
 
         private void SetupStartingRotation()
         {
-            rightThigh.eulerAngles = new Vector3(0, 0, dna.GetGeneValue("rightThighStartingRotation"));
-            leftThigh.eulerAngles = new Vector3(0, 0, dna.GetGeneValue("leftThighStartingRotation"));
-            rightCalf.eulerAngles = new Vector3(0, 0, dna.GetGeneValue("rightCalfStartingRotation"));
-            leftCalf.eulerAngles = new Vector3(0, 0, dna.GetGeneValue("leftCalfStartingRotation"));
-        }
-
-        public void OnDeath ()
-        {
-            isAlive = false;
+            rightThigh.eulerAngles = new Vector3(0, 0, dna.GetGeneValue(0));
+            leftThigh.eulerAngles = new Vector3(0, 0, dna.GetGeneValue(1));
+            rightCalf.eulerAngles = new Vector3(0, 0, dna.GetGeneValue(2));
+            leftCalf.eulerAngles = new Vector3(0, 0, dna.GetGeneValue(3));
         }
 
         private void Update ()
@@ -65,8 +64,22 @@ namespace QWOP_GA.GeneticAlgorithm
             float movementDuration = movementSequences[currentMovementStep].movementDuration;
             runnerController.StartMovement(movementType, movementDuration);
             currentMovementStep++;
+            if (currentMovementStep >= movementSequences.Length) currentMovementStep = 0;
         }
 
-    }
+        public void OnDeath()
+        {
+            isAlive = false;
+        }
 
+        public DNA GetDNA ()
+        {
+            return dna;
+        }
+
+        public float GetWalkedDistance ()
+        {
+            return distanceWalked;
+        }
+    }
 }
