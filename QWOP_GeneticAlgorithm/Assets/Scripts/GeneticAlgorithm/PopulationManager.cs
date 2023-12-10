@@ -7,8 +7,11 @@ namespace QWOP_GA.GeneticAlgorithm
 {
     public class PopulationManager : MonoBehaviour
     {
+        [Header("References")]
         [SerializeField] private UIManager UIManager;
         [SerializeField] private GameObject runnerPrefab;
+
+        [Header("Main Settings")]
         [SerializeField] private int populationSize = 10;
         [SerializeField] private float trialTime = 10f;
         [SerializeField] private int mutationChance = 1;
@@ -23,10 +26,16 @@ namespace QWOP_GA.GeneticAlgorithm
             UIManager.UpdateGenerationText(currentGeneration);
             UIManager.UpdateLastGenerationText(0f);
             UIManager.UpdateAllTimeBestText(0f);
+        }
+
+        public void SetupPopulationSettings (int populationSize, int mutationChance)
+        {
+            this.populationSize = populationSize;
+            this.mutationChance = mutationChance;
             SpawnFirstPopulation();
         }
 
-        private void SpawnFirstPopulation ()
+        public void SpawnFirstPopulation ()
         {
             for (int i = 0; i < populationSize; i++)
             {

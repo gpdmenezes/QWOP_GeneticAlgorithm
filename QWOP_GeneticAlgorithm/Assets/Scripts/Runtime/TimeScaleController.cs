@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace QWOP_GA.Runtime
 {
@@ -7,6 +8,11 @@ namespace QWOP_GA.Runtime
         public void OnTimeScaleButtonClick (int timeScale)
         {
             Time.timeScale = timeScale;
+        }
+
+        public void OnResetButtonClick ()
+        {
+            SceneManager.LoadScene(0);
         }
     }
 }

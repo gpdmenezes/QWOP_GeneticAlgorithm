@@ -4,7 +4,7 @@ namespace QWOP_GA.Runtime
 {
     public class RunnerController : MonoBehaviour
     {
-        [SerializeField] private float hingeSpeed = 40f;
+        [SerializeField] private float hingeSpeed = 50f;
         [SerializeField] private HingeJoint2D rightThigh;
         [SerializeField] private HingeJoint2D leftThigh;
         [SerializeField] private HingeJoint2D rightCalf;
