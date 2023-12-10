@@ -26,51 +26,42 @@ namespace QWOPGeneticAlgorithm {
 
         private void Update ()
         {
-            TestFunction();
-            return;
             ProcessThighInput();
             ProcessCalfInput();
         }
 
-        private void TestFunction ()
-        {
-
-        }
-
         private void ProcessThighInput ()
         {
-            if (Input.GetKeyDown(KeyCode.Q))
+            if (Input.GetKey(KeyCode.Q))
             {
                 MoveThighs(true);
-                return;
             }
-            
-            if (Input.GetKeyDown(KeyCode.W))
+            else if (Input.GetKey(KeyCode.W))
             {
                 MoveThighs(false);
-                return;
             }
-
-            rightThigh.useMotor = false;
-            leftThigh.useMotor = false;
+            else
+            {
+                rightThigh.useMotor = false;
+                leftThigh.useMotor = false;
+            }
         }
 
         private void ProcessCalfInput ()
         {
-            if (Input.GetKeyDown(KeyCode.O))
+            if (Input.GetKey(KeyCode.O))
             {
                 MoveCalfs(true);
-                return;
             }
-            
-            if (Input.GetKeyDown(KeyCode.P))
+            else if (Input.GetKey(KeyCode.P))
             {
                 MoveCalfs(false);
-                return;
             }
-
-            rightCalf.useMotor = false;
-            leftCalf.useMotor = false;
+            else
+            {
+                rightCalf.useMotor = false;
+                leftCalf.useMotor = false;
+            }
         }
 
         private void MoveThighs (bool isRight)
