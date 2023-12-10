@@ -16,6 +16,8 @@ namespace QWOP_GA.Runtime
         private JointMotor2D rightCalfMotor;
         private JointMotor2D leftCalfMotor;
 
+        private bool isMoving = false;
+
         private void Awake ()
         {
             rightThighMotor = rightThigh.motor;
@@ -24,7 +26,7 @@ namespace QWOP_GA.Runtime
             leftCalfMotor = leftCalf.motor;
         }
 
-        public void Move (int movementType)
+        public void StartMovement (int movementType, float movementDuration)
         {
             switch (movementType)
             {
@@ -45,6 +47,11 @@ namespace QWOP_GA.Runtime
                     StopMovingThighs();
                     break;
             }
+        }
+
+        private void Update ()
+        {
+            if (!isMoving) return;
         }
 
         private void MoveThighs (bool isRightThigh)

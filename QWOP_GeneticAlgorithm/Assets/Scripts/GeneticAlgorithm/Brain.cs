@@ -8,24 +8,37 @@ namespace QWOP_GA.GeneticAlgorithm
     public class Brain : MonoBehaviour
     {
         [SerializeField] private RunnerController runnerController;
-        [SerializeField] private Transform torsoReference;
+        [SerializeField] private Transform torso;
+        [SerializeField] private Transform rightThigh;
+        [SerializeField] private Transform leftThigh;
+        [SerializeField] private Transform rightCalf;
+        [SerializeField] private Transform leftCalf;
 
         private DNA dna;
-        private int dnaLength = 1;
+        private int movementSequencesSize = 4;
+        private MovementSequence[] movementSequences;
+        private int currentMovementStep = 0;
+        private float lastMovementTime = 0;
         private float distanceWalked = 0;
         private bool isAlive = true;
 
-        private int[] movementSequence;
-        private int currentMovementStep = 0;
-        private float lastMoveTime = 0;
-
         public void Initialize ()
         {
-            dna = new DNA(dnaLength, 6);
-            distanceWalked = 0;
+            dna = new DNA(movementSequencesSize);
+            SetupStartingRotation();
+            movementSequences = dna.GetMovementSequence();
             currentMovementStep = 0;
-            SetupMovementSequence();
+            distanceWalked = 0;
+            lastMovementTime = float.NegativeInfinity;
             isAlive = true;
+        }
+
+        private void SetupStartingRotation()
+        {
+            rightThigh.eulerAngles = new Vector3(0, 0, dna.GetGeneValue("rightThighStartingRotation"));
+            leftThigh.eulerAngles = new Vector3(0, 0, dna.GetGeneValue("leftThighStartingRotation"));
+            rightCalf.eulerAngles = new Vector3(0, 0, dna.GetGeneValue("rightCalfStartingRotation"));
+            leftCalf.eulerAngles = new Vector3(0, 0, dna.GetGeneValue("leftCalfStartingRotation"));
         }
 
         public void OnDeath ()
@@ -33,31 +46,25 @@ namespace QWOP_GA.GeneticAlgorithm
             isAlive = false;
         }
 
-        private void FixedUpdate ()
+        private void Update ()
         {
             if (!isAlive) return;
 
-            distanceWalked = Vector3.Distance(Vector3.zero, torsoReference.position);
+            distanceWalked = Vector3.Distance(transform.position, new Vector3(50, 0, 0));
 
-            
-
+            if (Time.time >= lastMovementTime + movementSequences[currentMovementStep].nextMovementDelay)
+            {
+                OnNextMove();
+            }
         }
 
         private void OnNextMove ()
         {
-            lastMoveTime = Time.time;
-            int movementType = movementSequence[currentMovementStep];
-            runnerController.Move(movementType);
+            lastMovementTime = Time.time;
+            int movementType = movementSequences[currentMovementStep].movementType;
+            float movementDuration = movementSequences[currentMovementStep].movementDuration;
+            runnerController.StartMovement(movementType, movementDuration);
             currentMovementStep++;
-        }
-
-        private void SetupMovementSequence ()
-        {
-            movementSequence = new int[4];
-            for (int i = 0; i < movementSequence.Length; i++)
-            {
-                movementSequence[i] = dna.GetGeneValue(i);
-            }
         }
 
     }

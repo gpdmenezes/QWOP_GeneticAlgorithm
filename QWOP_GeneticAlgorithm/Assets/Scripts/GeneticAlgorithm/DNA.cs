@@ -1,37 +1,67 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace QWOP_GA.GeneticAlgorithm {
 
     public class DNA
     {
-        private List<int> genes = new List<int>();
-        private int dnaLength = 0;
-        private int maxGeneValue = 0;
+        private float rightThighStartingRotation;
+        private float leftThighStartingRotation;
+        private float rightCalfStartingRotation;
+        private float leftCalfStartingRotation;
+        private MovementSequence[] movementSequences;
 
-        public DNA (int dnaLength, int maxGeneValue)
+        private const float minThighRotation = -90f;
+        private const float maxThighRotation = 60f;
+        private const float minCalfRotation = -5f;
+        private const float maxCalfRotation = 120f;
+
+        private const int movementTypes = 4;
+        private const float maxMovementDuration = 5f;
+        private const float maxMovementDelay = 5f;
+
+        public DNA (int moventSequencesSize)
         {
-            this.dnaLength = dnaLength;
-            this.maxGeneValue = maxGeneValue;
+            movementSequences = new MovementSequence[moventSequencesSize];
             SetRandomGeneValues();
         }
 
         public void SetRandomGeneValues ()
         {
-            genes.Clear();
-            for (int i = 0; i < dnaLength; i++)
+            rightThighStartingRotation = Random.Range(minThighRotation, maxThighRotation);
+            leftThighStartingRotation = Random.Range(minThighRotation, maxThighRotation);
+            rightCalfStartingRotation = Random.Range(minCalfRotation, maxCalfRotation);
+            leftCalfStartingRotation = Random.Range(minCalfRotation, maxCalfRotation);
+
+            for (int i = 0; i < movementSequences.Length; i++)
             {
-                genes.Add(Random.Range(0, maxGeneValue));
+                movementSequences[i].movementType = Random.Range(0, movementTypes + 1);
+                movementSequences[i].movementDuration = Random.Range(0, maxMovementDuration);
+                movementSequences[i].nextMovementDelay = Random.Range(0, maxMovementDelay);
             }
         }
 
-        public void SetGeneValue (int genePosition, int value)
+        public void SetGeneValue (float genePosition, float value)
         {
-            genes[genePosition] = value;
+            switch (genePosition)
+            {
+                case 0:
+                    rightThighStartingRotation = value;
+                    break;
+                case 1:
+                    leftThighStartingRotation = value;
+                    break;
+                case 2:
+                    rightCalfStartingRotation = value;
+                    break;
+                case 3:
+                    leftCalfStartingRotation = value;
+                    break;
+            }
         }
 
         public void CombineDNAs (DNA dna1, DNA dna2)
         {
+            /*
             for (int i = 0; i < dnaLength; i++)
             {
                 if (i < dnaLength / 2f)
@@ -45,16 +75,58 @@ namespace QWOP_GA.GeneticAlgorithm {
                     genes[i] = value;
                 }
             }
+            */
         }
 
         public void MutateGene ()
         {
-            genes[Random.Range(0, dnaLength)] = Random.Range(0, maxGeneValue);
+            int randomGene = Random.Range(0, 5);
+            switch (randomGene)
+            {
+                case 0:
+                    rightThighStartingRotation = Random.Range(minThighRotation, maxThighRotation); ;
+                    break;
+                case 1:
+                    leftThighStartingRotation = Random.Range(minThighRotation, maxThighRotation);
+                    break;
+                case 2:
+                    rightCalfStartingRotation = Random.Range(minCalfRotation, maxCalfRotation);
+                    break;
+                case 3:
+                    leftCalfStartingRotation = Random.Range(minCalfRotation, maxCalfRotation);
+                    break;
+                case 4:
+                    int randomMovementStep = Random.Range(0, movementSequences.Length);
+                    int randomMovementType = Random.Range(0, 4);
+                    movementSequences[randomMovementStep].movementType = randomMovementType;
+                    break;
+            }
         }
 
-        public int GetGeneValue (int genePosition)
+        public float GetGeneValue (string geneName)
         {
-            return genes[genePosition];
+            float geneValue = 0;
+            switch (geneName)
+            {
+                case "rightThighStartingRotation":
+                    geneValue = rightThighStartingRotation;
+                    break;
+                case "leftThighStartingRotation":
+                    geneValue = leftThighStartingRotation;
+                    break;
+                case "rightCalfStartingRotation":
+                    geneValue = rightCalfStartingRotation;
+                    break;
+                case "leftCalfStartingRotation":
+                    geneValue = leftCalfStartingRotation;
+                    break;
+            }
+            return geneValue;
+        }
+
+        public MovementSequence[] GetMovementSequence ()
+        {
+            return movementSequences;
         }
 
     }

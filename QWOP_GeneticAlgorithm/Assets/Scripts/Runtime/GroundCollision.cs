@@ -1,4 +1,3 @@
-using QWOP_GA.GeneticAlgorithm;
 using UnityEngine;
 
 namespace QWOP_GA.Runtime
@@ -11,7 +10,7 @@ namespace QWOP_GA.Runtime
         {
             if (collision.transform.CompareTag("Torso"))
             {
-                collision.transform.parent.GetComponent<Brain>().OnDeath();
+                collision.gameObject.SendMessageUpwards("OnDeath", SendMessageOptions.DontRequireReceiver);
             }
         }
 
