@@ -26,8 +26,15 @@ namespace QWOPGeneticAlgorithm {
 
         private void Update ()
         {
+            TestFunction();
+            return;
             ProcessThighInput();
             ProcessCalfInput();
+        }
+
+        private void TestFunction ()
+        {
+
         }
 
         private void ProcessThighInput ()
