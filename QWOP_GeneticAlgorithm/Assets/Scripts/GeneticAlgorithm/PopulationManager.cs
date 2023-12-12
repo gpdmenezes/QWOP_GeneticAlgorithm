@@ -13,16 +13,18 @@ namespace QWOP_GA.GeneticAlgorithm
 
         [Header("Main Settings")]
         [SerializeField] private int populationSize = 10;
-        [SerializeField] private float trialTime = 10f;
+        [SerializeField] private float initialTrialTime = 10f;
         [SerializeField] private int mutationChance = 1;
 
         private List<GameObject> population = new List<GameObject>();
         private int currentGeneration = 1;
         private float timeElapsed = 0;
         private float allTimeBest = 0;
+        private float trialTime = 0;
 
         private void Awake ()
         {
+            trialTime = initialTrialTime;
             UIManager.UpdateGenerationText(currentGeneration);
             UIManager.UpdateLastGenerationText(0f);
             UIManager.UpdateAllTimeBestText(0f);
@@ -63,16 +65,10 @@ namespace QWOP_GA.GeneticAlgorithm
         private void BreedNewPopulation ()
         {
             List<GameObject> sortedPopulation = population.OrderBy(o => o.GetComponent<Brain>().GetFitness()).ToList();
+            
+            UpdateTrialValues(sortedPopulation);
 
-            float lastGenerationBest = sortedPopulation[sortedPopulation.Count - 1].GetComponent<Brain>().GetFitness();
-            UIManager.UpdateLastGenerationText(lastGenerationBest);
-            if (lastGenerationBest > allTimeBest)
-            {
-                allTimeBest = lastGenerationBest;
-                UIManager.UpdateAllTimeBestText(allTimeBest);
-            }
-
-            for (int i = (int) (sortedPopulation.Count / 2f) - 1; i < sortedPopulation.Count - 1; i++)
+            for (int i = (int)(sortedPopulation.Count / 2f) - 1; i < sortedPopulation.Count - 1; i++)
             {
                 population.Add(Breed(sortedPopulation[i], sortedPopulation[i + 1]));
                 population.Add(Breed(sortedPopulation[i + 1], sortedPopulation[i]));
@@ -88,6 +84,19 @@ namespace QWOP_GA.GeneticAlgorithm
             UIManager.UpdateGenerationText(currentGeneration);
         }
 
+        private void UpdateTrialValues(List<GameObject> sortedPopulation)
+        {
+            float lastGenerationBest = sortedPopulation[sortedPopulation.Count - 1].GetComponent<Brain>().GetFitness();
+            UIManager.UpdateLastGenerationText(lastGenerationBest);
+            UpdateTrialTime(lastGenerationBest);
+
+            if (lastGenerationBest > allTimeBest)
+            {
+                allTimeBest = lastGenerationBest;
+                UIManager.UpdateAllTimeBestText(allTimeBest);
+            }
+        }
+
         private void Update ()
         {
             timeElapsed += Time.deltaTime;
@@ -96,6 +105,18 @@ namespace QWOP_GA.GeneticAlgorithm
             {
                 BreedNewPopulation();
                 timeElapsed = 0;
+            }
+        }
+
+        private void UpdateTrialTime (float lastGenerationFitness)
+        {
+            if (lastGenerationFitness <= 10)
+            {
+                trialTime = initialTrialTime;
+            } else
+            {
+                int newTrialTime = (int) initialTrialTime + (int) ((lastGenerationFitness - 10) / 5) * (int) (initialTrialTime / 2);
+                trialTime = newTrialTime;
             }
         }
     }
